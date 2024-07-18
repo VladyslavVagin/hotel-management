@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, ChangeEvent, FormEvent } from "react";
+import { signUp } from "next-auth-sanity/client";
+import { signIn, useSession } from "next-auth/react";
 import { AiFillGithub } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
+import toast from "react-hot-toast";
 
 const defaultFormData = {
   email: "",
@@ -21,9 +24,13 @@ const Auth = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      console.log(formData);
+      const user = await signUp(formData);
+      if (user) {
+        toast.success("Success! Please, sign in");
+      }
     } catch (error) {
       console.log(error);
+      toast.error("Error! Please, try again");
     } finally {
       setFormData(defaultFormData);
     }
