@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import { useRouter } from "next/router";
 import { signUp } from "next-auth-sanity/client";
 import { signIn, useSession } from "next-auth/react";
 import { AiFillGithub } from "react-icons/ai";
@@ -19,6 +20,23 @@ const Auth = () => {
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+
+  }, [])
+
+  const loginHandler = async () => {
+    try {
+      await signIn();
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+      toast.error("Error! Please, try again");
+    }
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -48,8 +66,14 @@ const Auth = () => {
           </h1>
           <p>OR</p>
           <span className="inline-flex items-center">
-            <AiFillGithub className="mr-3 text-4xl cursor-pointer text-black dark:text-white" />
-            <FcGoogle className="ml-3 text-4xl cursor-pointer" />
+            <AiFillGithub
+              onClick={loginHandler}
+              className="mr-3 text-4xl cursor-pointer text-black dark:text-white"
+            />
+            <FcGoogle
+              onClick={loginHandler}
+              className="ml-3 text-4xl cursor-pointer"
+            />
           </span>
         </div>
 
@@ -89,7 +113,9 @@ const Auth = () => {
             Sign Up
           </button>
         </form>
-        <button className="text-blue-700 underline">Login</button>
+        <button onClick={loginHandler} className="text-blue-700 underline">
+          Login
+        </button>
       </div>
     </section>
   );
