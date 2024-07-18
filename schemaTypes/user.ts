@@ -2,7 +2,7 @@ import { defineField } from "sanity";
 
 const user = {
   name: "user",
-  title: "user",
+  title: "User",
   type: "document",
   fields: [
     defineField({
@@ -21,6 +21,24 @@ const user = {
       type: "string",
       descriptipn: "Name of the user",
       readOnly: true,
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "image",
+      title: "Image",
+      type: "url",
+    }),
+    defineField({
+      name: "password",
+      title: "Password",
+      type: "string",
+      hidden: true,
+    }),
+    defineField({
+      name: "about",
+      title: "About",
+      type: "text",
+      description: "A brief description about the user",
     }),
   ],
 };
