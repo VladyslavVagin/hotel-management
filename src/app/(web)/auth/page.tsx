@@ -26,8 +26,8 @@ const Auth = () => {
   const router = useRouter();
 
   useEffect(() => {
-
-  }, [])
+    if (session) router.push("/");
+  }, [session, router]);
 
   const loginHandler = async () => {
     try {
