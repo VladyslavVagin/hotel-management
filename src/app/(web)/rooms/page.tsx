@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { getRooms } from "@/libs/apis";
 import { Room } from "@/models/room";
+import RoomCard from "@/components/RoomCard/RoomCard";
+import Search from "@/components/Search/Search";
 
 const Rooms = () => {
   const [roomTypeFilter, setRoomTypeFilter] = useState("");
@@ -52,9 +54,22 @@ const Rooms = () => {
   };
 
   const filteredRooms = filterRooms(data || []);
-  console.log(filteredRooms);
 
-  return <div>Rooms</div>;
+  return (
+    <div className="container mx-auto pt-10">
+      <Search
+        roomTypeFilter={roomTypeFilter}
+        searchQuery={searchQueryValue}
+        setRoomTypeFilter={setRoomTypeFilter}
+        setSearchQuery={setSearchQueryValue}
+      />
+      <div className="flex mt-20 justify-between flex-wrap">
+        {filteredRooms.map((room) => (
+          <RoomCard key={room._id} room={room} />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default Rooms;
