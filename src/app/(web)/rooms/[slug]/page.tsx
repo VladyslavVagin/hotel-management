@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import useSWR from "swr";
+import toast from "react-hot-toast";
 import { MdOutlineCleaningServices } from "react-icons/md";
 import { LiaFireExtinguisherSolid } from "react-icons/lia";
 import { AiOutlineMedicineBox } from "react-icons/ai";
@@ -10,6 +11,7 @@ import { getRoom } from "@/libs/apis";
 import LoadingSpinner from "../../loading";
 import HotelPhotoGallery from "@/components/HotelPhotoGallery/HotelPhotoGallery";
 import BookRoomCta from "@/components/BookRoomCta/BookRoomCta";
+import toast from "react-hot-toast";
 
 const RoomDetails = (props: { params: { slug: string } }) => {
   const {
@@ -18,6 +20,8 @@ const RoomDetails = (props: { params: { slug: string } }) => {
 
   const [checkinDate, setCheckinDate] = useState<Date | null>(null);
   const [checkoutDate, setCheckoutDate] = useState<Date | null>(null);
+  const [adults, setAdults] = useState<number>(1);
+  const [childrenNumber, setChildrenNumber] = useState<number>(0);
 
   const fetchRoom = async () => getRoom(slug);
 
@@ -38,6 +42,15 @@ const RoomDetails = (props: { params: { slug: string } }) => {
     }
 
     return null;
+  };
+
+  const handleBookNow = () => {
+    if (!checkinDate || !checkoutDate)
+      return toast.error("Please select checkin and checkout dates");
+
+    if (checkinDate >= checkoutDate) {
+      return toast.error("Checkout date must be greater than checkin date");
+    }
   };
 
   return (
@@ -130,6 +143,12 @@ const RoomDetails = (props: { params: { slug: string } }) => {
               checkoutDate={checkoutDate}
               setCheckoutDate={setCheckoutDate}
               calcMinCheckoutDate={calcMinCheckoutDate}
+              adults={adults}
+              setAdults={setAdults}
+              childrenNumber={childrenNumber}
+              setChildrenNumber={setChildrenNumber}
+              isBooked={room.isBooked}
+              handleBookNow={handleBookNow}
             />
           </div>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, FC, SetStateAction } from "react";
+import { ChangeEvent, Dispatch, FC, SetStateAction } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -10,9 +10,15 @@ type Props = {
   checkoutDate: Date | null;
   setCheckoutDate: Dispatch<SetStateAction<Date | null>>;
   calcMinCheckoutDate: () => Date | null;
+  adults: number;
+  setAdults: Dispatch<SetStateAction<number>>;
+  childrenNumber: number;
+  setChildrenNumber: Dispatch<SetStateAction<number>>;
   price: number;
   discount: number;
   specialNote: string;
+  isBooked: boolean;
+  handleBookNow: () => void;
 };
 
 const BookRoomCta: FC<Props> = (props) => {
@@ -25,8 +31,21 @@ const BookRoomCta: FC<Props> = (props) => {
     checkoutDate,
     setCheckoutDate,
     calcMinCheckoutDate,
+    adults,
+    setAdults,
+    childrenNumber,
+    setChildrenNumber,
+    isBooked,
+    handleBookNow,
   } = props;
   const discountPrice = price - (price / 100) * discount;
+
+  const calcNoOfDays = () => {
+    if (!checkinDate || !checkoutDate) return 0;
+    const diffTime = checkoutDate.getTime() - checkinDate.getTime();
+    const noOfDays = Math.ceil(diffTime / (24 * 60 * 60 * 1000));
+    return noOfDays;
+  };
 
   return (
     <div className="px-7 py-6">
@@ -81,6 +100,58 @@ const BookRoomCta: FC<Props> = (props) => {
           />
         </div>
       </div>
+      <div className="flex mt-4">
+        <div className="w-1/2 pr-2">
+          <label
+            htmlFor="adults"
+            className="block text-sm font-medium text-gray-900 dark:text-gray-400"
+          >
+            Adults
+          </label>
+          <input
+            type="number"
+            id="adults"
+            value={adults}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setAdults(+e.target.value)
+            }
+            min={1}
+            max={5}
+            className="w-full border border-gray-300 rounded-lg p-2.5 text-gray-900"
+          />
+        </div>
+        <div className="w-1/2 pl-2">
+          <label
+            htmlFor="children"
+            className="block text-sm font-medium text-gray-900 dark:text-gray-400"
+          >
+            Children
+          </label>
+          <input
+            type="number"
+            id="children"
+            value={childrenNumber}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setChildrenNumber(+e.target.value)
+            }
+            min={0}
+            max={3}
+            className="w-full border border-gray-300 rounded-lg p-2.5 text-gray-900"
+          />
+        </div>
+      </div>
+
+      {calcNoOfDays() > 0 && (
+        <p className="mt-3">Total Price: $ {calcNoOfDays() * discountPrice}</p>
+      )}
+
+      <button
+        disabled={isBooked}
+        onClick={handleBookNow}
+        className="btn-primary w-full mt-6 disabled:bg-gray-500 disabled:cursor-not-allowed"
+      >
+        {isBooked ? "Booked" : "Book Now"}
+      </button>
     </div>
   );
 };
