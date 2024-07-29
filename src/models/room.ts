@@ -1,3 +1,4 @@
+import hotelRoom from '../../schemaTypes/hotelRoom';
 type CoverImage = {
   url: string;
 };
@@ -34,4 +35,16 @@ export type Room = {
   slug: Slug;
   specialNote: string;
   type: string;
+};
+
+export type CreateBookingDto = {
+  user: string;
+  hotelRoom: string;
+  checkinDate: string;
+  checkoutDate: string;
+  numberOfDays: number;
+  adults: number;
+  children: number;
+  totalPrice: number;
+  discount: number;
 };

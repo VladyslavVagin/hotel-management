@@ -3,15 +3,17 @@
 import { useState } from "react";
 import useSWR from "swr";
 import toast from "react-hot-toast";
+import axios from "axios";
 import { MdOutlineCleaningServices } from "react-icons/md";
 import { LiaFireExtinguisherSolid } from "react-icons/lia";
 import { AiOutlineMedicineBox } from "react-icons/ai";
 import { GiSmokeBomb } from "react-icons/gi";
+
 import { getRoom } from "@/libs/apis";
+import { getStripe } from "@/libs/stripe";
 import LoadingSpinner from "../../loading";
 import HotelPhotoGallery from "@/components/HotelPhotoGallery/HotelPhotoGallery";
 import BookRoomCta from "@/components/BookRoomCta/BookRoomCta";
-import toast from "react-hot-toast";
 
 const RoomDetails = (props: { params: { slug: string } }) => {
   const {
@@ -44,13 +46,49 @@ const RoomDetails = (props: { params: { slug: string } }) => {
     return null;
   };
 
-  const handleBookNow = () => {
+  const handleBookNow = async () => {
     if (!checkinDate || !checkoutDate)
       return toast.error("Please select checkin and checkout dates");
 
     if (checkinDate >= checkoutDate) {
       return toast.error("Checkout date must be greater than checkin date");
     }
+
+    const numberOfDays = calcNumDays();
+    const hotelRoomSlug = room.slug.current;
+    const stripe = await getStripe();
+
+    // Integrate Stripe payment gateway
+    try {
+      const { data: stripeSession } = await axios.post("/api/stripe", {
+        checkinDate,
+        checkoutDate,
+        adults,
+        children: childrenNumber,
+        numberOfDays,
+        hotelRoomSlug,
+      });
+
+      if (stripe) {
+        const result = await stripe.redirectToCheckout({
+          sessionId: stripeSession.id,
+        });
+
+        if (result.error) {
+          toast.error("Payment failed");
+        }
+      }
+    } catch (error) {
+      console.log("Error ", error);
+      toast.error("En error occurred");
+    }
+  };
+
+  const calcNumDays = () => {
+    if (!checkinDate || !checkoutDate) return;
+    const diffTime = checkoutDate.getTime() - checkinDate.getTime();
+    const noOfDays = Math.ceil(diffTime / (24 * 60 * 60 * 1000));
+    return noOfDays;
   };
 
   return (
