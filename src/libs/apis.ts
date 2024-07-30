@@ -1,6 +1,7 @@
 import { CreateBookingDto, Room } from "@/models/room";
 import sanityClient from "./sanity";
 import * as queries from "./sanityQueries";
+import { Booking } from "@/models/booking";
 
 export async function getFeaturedRoom() {
   const result = await sanityClient.fetch<Room>(
@@ -64,8 +65,47 @@ export const createBooking = async ({
   const { data } = await axios.post(
     `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2024-06-20/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
     mutation,
-    { headers: { Authorization: `Bearer ${process.env.SANITY_API_TOKEN}` }}
+    { headers: { Authorization: `Bearer ${process.env.SANITY_API_TOKEN}` } }
   );
 
   return data;
 };
+
+export const updateHotelRoom = async (hotelRoomId: string) => {
+  const mutation = {
+    mutations: [
+      {
+        patch: {
+          id: hotelRoomId,
+          set: { isBooked: true },
+        },
+      },
+    ],
+  };
+
+  const { data } = await axios.post(
+    `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2024-06-20/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
+    mutation,
+    { headers: { Authorization: `Bearer ${process.env.SANITY_API_TOKEN}` } }
+  );
+
+  return data;
+};
+
+export async function getUserBookings(userId: string) {
+  const result = await sanityClient.fetch<Booking>(
+    queries.getUserBookingsQuery,
+    { userId },
+    { cache: "no-cache" }
+  );
+
+  return result;
+}
+
+export async function getUserData(userId: string) {
+  const result = await sanityClient.fetch(
+    queries.getUserDataQuery,
+    { userId },
+    { cache: "no-cache" }
+  );
+}

@@ -73,8 +73,8 @@ export async function POST(req: Request, res: Response) {
       success_url: `${origin}/users/${userId}`,
       metadata: {
         user: userId,
-        checkinDate,
-        checkoutDate,
+        checkinDate: formattedCheckinDate,
+        checkoutDate: formattedCheckoutDate,
         adults,
         children,
         hotelRoom: room._id,
