@@ -5,7 +5,7 @@ import { authOptions } from "@/libs/auth";
 import { getRoom } from "@/libs/apis";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: "2023-08-16",
+  apiVersion: "2024-06-20",
 });
 
 type RequestData = {
@@ -14,7 +14,7 @@ type RequestData = {
   adults: number;
   children: number;
   numberOfDays: number;
-  hotelRoom: string;
+  hotelRoomSlug: string;
 };
 
 export async function POST(req: Request, res: Response) {
