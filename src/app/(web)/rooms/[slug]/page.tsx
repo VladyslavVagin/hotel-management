@@ -69,8 +69,6 @@ const RoomDetails = (props: { params: { slug: string } }) => {
         hotelRoomSlug,
       });
 
-      console.log(stripeSession);
-
       if (stripe) {
         const result = await stripe.redirectToCheckout({
           sessionId: stripeSession.id,

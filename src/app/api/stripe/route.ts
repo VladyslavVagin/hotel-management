@@ -71,6 +71,17 @@ export async function POST(req: Request, res: Response) {
       ],
       payment_method_types: ["card"],
       success_url: `${origin}/users/${userId}`,
+      metadata: {
+        user: userId,
+        checkinDate,
+        checkoutDate,
+        adults,
+        children,
+        hotelRoom: room._id,
+        numberOfDays,
+        discount: room.discount,
+        totalPrice,
+      },
     });
 
     return NextResponse.json(stripeSession, {
