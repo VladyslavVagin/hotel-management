@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/libs/auth";
-import { getUserData } from "@/libs/apis";
+import { createReview, getUserData, updateReview } from "@/libs/apis";
 
 export async function GET(req: Request, res: Response) {
   const session = await getServerSession(authOptions);
@@ -37,6 +37,24 @@ export async function POST(req: Request, res: Response) {
 
   try {
     // Check if already exists
+    const alreadyExists = await checkReviewExists(userId, roomId);
+
+    let data;
+    if (alreadyExists) {
+      data = await updateReview({
+        reviewId: alreadyExists._id,
+        reviewText,
+        userRating: ratingValue,
+      });
+    } else {
+      data = await createReview({
+        hotelRoomId: roomId,
+        reviewText,
+        userId,
+        userRating: ratingValue,
+      });
+    }
+    return NextResponse.json(data, { status: 200, statusText: "OK" });
   } catch (error: any) {
     console.log("Error updating", error);
     return new NextResponse("Unable to create review", { status: 400 });

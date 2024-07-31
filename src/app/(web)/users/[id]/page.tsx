@@ -3,6 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 import useSWR from "swr";
+import toast from "react-hot-toast";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { FaSignOutAlt } from "react-icons/fa";
@@ -15,6 +16,7 @@ import Chart from "@/components/Chart/Chart";
 import RatingModal from "@/components/RatingModal/RatingModal";
 import BackDrop from "@/components/BackDrop/BackDrop";
 import LoadingSpinner from "../../loading";
+import review from "../../../../../schemaTypes/review";
 
 const UserDetails = (props: { params: { id: string } }) => {
   const {
@@ -23,15 +25,43 @@ const UserDetails = (props: { params: { id: string } }) => {
   const [currentNav, setCurrentNav] = useState<
     "bookings" | "amount" | "ratings"
   >("bookings");
-  const [roomID, setRoomId] = useState<string | null>(null);
+  const [roomId, setRoomId] = useState<string | null>(null);
   const [isRatingVisible, setIsRatingVisible] = useState<boolean>(false);
   const [isSubmittingReview, setIsSubmittingReview] = useState<boolean>(false);
-  const [ratingValue, setRatingValue] = useState<number>(0);
+  const [ratingValue, setRatingValue] = useState<number | null>(0);
   const [ratingText, setRatingText] = useState<string>("");
 
   const toggleRatingModal = () => setIsRatingVisible((prev) => !prev);
 
-  const reviewSubmitHandler = async () => {};
+  const reviewSubmitHandler = async () => {
+    if (!ratingText.trim().length || !ratingValue) {
+      toast.error("Please provide a rating and review text");
+    }
+
+    if (!roomId) {
+      toast.error("Room ID not found");
+    }
+
+    setIsSubmittingReview(true);
+
+    try {
+      const { data } = await axios.post("/api/users", {
+        reviewText: ratingText,
+        ratingValue,
+        roomId,
+      });
+      toast.success("Review submitted successfully");
+    } catch (error: any) {
+      console.log("Error updating", error);
+      toast.error("Review failed");
+    } finally {
+      setRatingText("");
+      setRatingValue(null);
+      setRoomId(null);
+      setIsSubmittingReview(false);
+      setIsRatingVisible(false);
+    }
+  };
 
   const fetchUserBooking = async () => await getUserBookings(userId);
   const fetchUserData = async () => {
@@ -64,7 +94,7 @@ const UserDetails = (props: { params: { id: string } }) => {
     <div className="container mx-auto px-2 md:px-4 py-10">
       <div className="grid md:grid-cols-12 gap-10">
         <div className="hidden md:block md:col-span-4 lg:col-span-3 shadow-lg h-fit sticky top-10 bg-[#eff0f2] text-black rounded-lg px-6 py-4">
-          <div className="md:w-[143px] w-38 h-28 md:h-[143px] mx-auto mb-5 rounded-full overflow-hidden">
+          <div className="md:w-[143px] w-28 h-28 md:h-[143px] mx-auto mb-5 rounded-full overflow-hidden">
             <Image
               src={userData?.image}
               alt={userData?.name}
