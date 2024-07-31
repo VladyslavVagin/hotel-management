@@ -7,7 +7,7 @@ type Props = {
   setRatingValue: Dispatch<SetStateAction<number | null>>;
   ratingText: string;
   setRatingText: Dispatch<SetStateAction<string>>;
-  reviewSubmitHandler: () => Promise<void>;
+  reviewSubmitHandler: () => Promise<string | undefined>;
   isSubmittingReview: boolean;
   toggleRatingModal: () => void;
 };
