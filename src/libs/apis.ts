@@ -3,7 +3,7 @@ import sanityClient from "./sanity";
 import * as queries from "./sanityQueries";
 import { Booking } from "@/models/booking";
 import { CreateReviewDto, Review, UpdateReviewDto } from "@/models/review";
-import hotelRoom from '../../schemaTypes/hotelRoom';
+import hotelRoom from "../../schemaTypes/hotelRoom";
 
 export async function getFeaturedRoom() {
   const result = await sanityClient.fetch<Room>(
@@ -159,15 +159,17 @@ export const createReview = async ({
   userRating,
 }: CreateReviewDto) => {
   const mutation = {
-    mutations: [{
-      create: {
-        _type: "review",
-        user: { _type: "reference", _ref: userId },
-        hotelRoom: { _type: "reference", _ref: hotelRoomId },
-        text: reviewText,
-        userRating,
-      }
-    }];
+    mutations: [
+      {
+        create: {
+          _type: "review",
+          user: { _type: "reference", _ref: userId },
+          hotelRoom: { _type: "reference", _ref: hotelRoomId },
+          text: reviewText,
+          userRating,
+        },
+      },
+    ],
   };
   const { data } = await axios.post(
     `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2024-06-20/data/mutate/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
@@ -179,6 +181,10 @@ export const createReview = async ({
 };
 
 export async function getRoomReviews(roomId: string) {
-  const result = await sanityClient.fetch<Review[]>(queries.getRoomReviewsQuery, {roomId}, {cache: "no-cache"});
+  const result = await sanityClient.fetch<Review[]>(
+    queries.getRoomReviewsQuery,
+    { roomId },
+    { cache: "no-cache" }
+  );
   return result;
 }
