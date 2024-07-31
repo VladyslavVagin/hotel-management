@@ -26,8 +26,9 @@ export async function POST(req: Request, res: Response) {
   switch (event.type) {
     case checkout_session_completed:
       const session = event.data.object as Stripe.Checkout.Session;
-      const {
-        metadata: {
+
+      if (session.metadata) {
+        const {
           checkinDate,
           checkoutDate,
           adults,
@@ -37,29 +38,31 @@ export async function POST(req: Request, res: Response) {
           discount,
           totalPrice,
           user,
-        },
-      } = session;
+        } = session.metadata;
 
-      // create a booking
-      await createBooking({
-        adults: Number(adults),
-        checkinDate,
-        checkoutDate,
-        children: Number(children),
-        hotelRoom,
-        numberOfDays: Number(numberOfDays),
-        totalPrice: Number(totalPrice),
-        user,
-        discount: Number(discount),
-      });
+        // create a booking
+        await createBooking({
+          adults: Number(adults),
+          checkinDate,
+          checkoutDate,
+          children: Number(children),
+          hotelRoom,
+          numberOfDays: Number(numberOfDays),
+          totalPrice: Number(totalPrice),
+          user,
+          discount: Number(discount),
+        });
 
-      // update Hotel Room availability
-      await updateHotelRoom(hotelRoom);
+        // update Hotel Room availability
+        await updateHotelRoom(hotelRoom);
 
-      return new NextResponse.json("Booking successful", {
-        status: 200,
-        statusText: "Booking successful",
-      });
+        return new NextResponse.json("Booking successful", {
+          status: 200,
+          statusText: "Booking successful",
+        });
+      } else {
+        console.log("Metadata is null");
+      }
 
     default:
       console.log(`Unhandled event type ${event.type}`);
