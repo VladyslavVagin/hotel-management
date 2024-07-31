@@ -19,7 +19,7 @@ const user = {
       name: "name",
       title: "Name",
       type: "string",
-      descriptipn: "Name of the user",
+      description: "Name of the user",
       readOnly: true,
       validation: (Rule) => Rule.required(),
     }),
