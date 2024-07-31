@@ -11,6 +11,9 @@ import { GiMoneyStack } from "react-icons/gi";
 import { getUserBookings } from "@/libs/apis";
 import { User } from "@/models/user";
 import Table from "@/components/Table/Table";
+import Chart from "@/components/Chart/Chart";
+import RatingModal from "@/components/RatingModal/RatingModal";
+import BackDrop from "@/components/BackDrop/BackDrop";
 import LoadingSpinner from "../../loading";
 
 const UserDetails = (props: { params: { id: string } }) => {
@@ -21,6 +24,14 @@ const UserDetails = (props: { params: { id: string } }) => {
     "bookings" | "amount" | "ratings"
   >("bookings");
   const [roomID, setRoomId] = useState<string | null>(null);
+  const [isRatingVisible, setIsRatingVisible] = useState<boolean>(false);
+  const [isSubmittingReview, setIsSubmittingReview] = useState<boolean>(false);
+  const [ratingValue, setRatingValue] = useState<number>(0);
+  const [ratingText, setRatingText] = useState<string>("");
+
+  const toggleRatingModal = () => setIsRatingVisible((prev) => !prev);
+
+  const reviewSubmitHandler = async () => {};
 
   const fetchUserBooking = async () => await getUserBookings(userId);
   const fetchUserData = async () => {
@@ -140,9 +151,35 @@ const UserDetails = (props: { params: { id: string } }) => {
             </ol>
           </nav>
 
-          {currentNav === "bookings" ? userBookings && <Table bookingDeatils={userBookings} setRoomId={setRoomId} /> : <></>}
+          {currentNav === "bookings" ? (
+            userBookings && (
+              <Table
+                bookingDeatils={userBookings}
+                setRoomId={setRoomId}
+                toggleRatingModal={toggleRatingModal}
+              />
+            )
+          ) : (
+            <></>
+          )}
+          {currentNav === "amount" ? (
+            userBookings && <Chart userBookings={userBookings} />
+          ) : (
+            <></>
+          )}
         </div>
       </div>
+      <RatingModal
+        isOpen={isRatingVisible}
+        ratingValue={ratingValue}
+        setRatingValue={setRatingValue}
+        ratingText={ratingText}
+        setRatingText={setRatingText}
+        reviewSubmitHandler={reviewSubmitHandler}
+        isSubmittingReview={isSubmittingReview}
+        toggleRatingModal={toggleRatingModal}
+      />
+      <BackDrop isOpen={isRatingVisible} />
     </div>
   );
 };

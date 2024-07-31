@@ -13,7 +13,7 @@ import { Booking } from "@/models/booking";
 
 ChartJS.register(Tooltip, CategoryScale, LinearScale, BarElement);
 
-export const option = {
+export const options = {
   responsive: true,
   plugins: {
     legend: {
@@ -27,7 +27,19 @@ export const option = {
 };
 
 const Chart: FC<{userBookings: Booking[]}> = ({ userBookings }) => {
-  return <div>Chart</div>;
+ const labels = userBookings.map(booking => booking.hotelRoom.name);
+ const amountSpent = userBookings.map(booking => booking.totalPrice);
+
+  return <Bar options={options} data={{
+    labels,
+    datasets: [{
+      label: "Amount Spent",
+      data: amountSpent,
+      borderWidth: 1,
+      backgroundColor: "#F27405",
+      hoverBackgroundColor: "#F2C641"
+    }],
+  }}/>;
 };
 
 export default Chart;

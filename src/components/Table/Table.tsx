@@ -7,9 +7,10 @@ import { Booking } from "@/models/booking";
 type Props = {
   bookingDeatils: Booking[];
   setRoomId: Dispatch<SetStateAction<string | null>>;
+  toggleRatingModal: () => void;
 };
 
-const Table: FC<Props> = ({ bookingDeatils, setRoomId }) => {
+const Table: FC<Props> = ({ bookingDeatils, setRoomId, toggleRatingModal }) => {
   const router = useRouter();
 
   return (
@@ -46,6 +47,7 @@ const Table: FC<Props> = ({ bookingDeatils, setRoomId }) => {
               <td className="px-6 py-4">
                 <button onClick={() => {
                     setRoomId(booking.hotelRoom._id);
+                    toggleRatingModal();
                 }} className="font-medium text-blue-600 hover:underline">Rate</button>
               </td>
             </tr>
