@@ -1,22 +1,30 @@
 "use client";
 
+import { useState } from "react";
 import axios from "axios";
 import useSWR from "swr";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { FaSignOutAlt } from "react-icons/fa";
+import { BsJournalBookmarkFill } from "react-icons/bs";
+import { GiMoneyStack } from "react-icons/gi";
 import { getUserBookings } from "@/libs/apis";
 import { User } from "@/models/user";
+import Table from "@/components/Table/Table";
 import LoadingSpinner from "../../loading";
 
 const UserDetails = (props: { params: { id: string } }) => {
   const {
     params: { id: userId },
   } = props;
+  const [currentNav, setCurrentNav] = useState<
+    "bookings" | "amount" | "ratings"
+  >("bookings");
+  const [roomID, setRoomId] = useState<string | null>(null);
 
-  const fetchUserBooking = async () => getUserBookings(userId);
+  const fetchUserBooking = async () => await getUserBookings(userId);
   const fetchUserData = async () => {
-    const { data } = await axios.get<User>('/api/users');
+    const { data } = await axios.get<User>("/api/users");
     return data;
   };
 
@@ -24,23 +32,22 @@ const UserDetails = (props: { params: { id: string } }) => {
     data: userBookings,
     error,
     isLoading,
-  } = useSWR('/api/userbooking', fetchUserBooking);
+  } = useSWR("/api/userbooking", fetchUserBooking);
 
   const {
     data: userData,
     isLoading: loadingUserData,
     error: errorGettingUserData,
-  } = useSWR('/api/users', fetchUserData);
+  } = useSWR("/api/users", fetchUserData);
 
-
-  if (error || errorGettingUserData) throw new Error('Cannot fetch data');
-  if (typeof userBookings === 'undefined' && !isLoading)
-    throw new Error('Cannot fetch data');
-  if (typeof userData === 'undefined' && !loadingUserData)
-    throw new Error('Cannot fetch data');
+  if (error || errorGettingUserData) throw new Error("Cannot fetch data");
+  if (typeof userBookings === "undefined" && !isLoading)
+    throw new Error("Cannot fetch data");
+  if (typeof userData === "undefined" && !loadingUserData)
+    throw new Error("Cannot fetch data");
 
   if (loadingUserData) return <LoadingSpinner />;
-  if (!userData) throw new Error('Cannot fetch data');
+  if (!userData) throw new Error("Cannot fetch data");
 
   return (
     <div className="container mx-auto px-2 md:px-4 py-10">
@@ -69,6 +76,71 @@ const UserDetails = (props: { params: { id: string } }) => {
               onClick={() => signOut({ callbackUrl: "/" })}
             />
           </div>
+        </div>
+
+        <div className="md:col-span-8 lg:col-span-9">
+          <div className="flex items-center">
+            <h5 className="2xl font-bold mr-3">Hello, {userData?.name}!</h5>
+          </div>
+          <div className="md:hidden w-14 h-14 rounded-full overflow-hidden">
+            <Image
+              className="img scale-animation rounded-full"
+              width={56}
+              height={56}
+              src={userData?.image}
+              alt="User Name"
+            />
+          </div>
+          <p className="block w-fit md:hidden text-sm py-2">
+            {userData?.about || ""}
+          </p>
+          <p className="text-xs py-2 font-medium">
+            Joined In {userData?._createdAt.split("T")[0]}
+          </p>
+          <div className="md:hidden flex items-center my-2">
+            <p className="mr-2">Sign Out</p>
+            <FaSignOutAlt
+              className="text-3xl cursor-pointer"
+              onClick={() => signOut({ callbackUrl: "/" })}
+            />
+          </div>
+
+          <nav className="sticky top-0 w-fit px-2 mx-auto md:w-full md:px-5 py-3 mb-8 text-gray-700 border-gray-200 rounded-lg bg-gray-50 mt-7">
+            <ol
+              className={`${currentNav === "bookings" ? "text-blue-600" : "text-gray-700"} inline-flex mr-1 md:mr-5 items-center space-x-1 md:space-x-3`}
+            >
+              <li
+                className="inline-flex items-center cursor-pointer"
+                onClick={() => setCurrentNav("bookings")}
+              >
+                <BsJournalBookmarkFill />
+                <a
+                  href="#"
+                  className="inline-flex items-center mx-1 md:mx-3 text-xs md:text-sm font-medium"
+                >
+                  Current Bookings
+                </a>
+              </li>
+            </ol>
+            <ol
+              className={`${currentNav === "amount" ? "text-blue-600" : "text-gray-700"} inline-flex mr-1 md:mr-5 items-center space-x-1 md:space-x-3`}
+            >
+              <li
+                className="inline-flex items-center cursor-pointer"
+                onClick={() => setCurrentNav("amount")}
+              >
+                <GiMoneyStack />
+                <a
+                  href="#"
+                  className="inline-flex items-center mx-1 md:mx-3 text-xs md:text-sm font-medium"
+                >
+                  Amount Spent
+                </a>
+              </li>
+            </ol>
+          </nav>
+
+          {currentNav === "bookings" ? userBookings && <Table bookingDeatils={userBookings} setRoomId={setRoomId} /> : <></>}
         </div>
       </div>
     </div>

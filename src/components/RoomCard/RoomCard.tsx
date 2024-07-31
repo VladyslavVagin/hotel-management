@@ -30,7 +30,7 @@ const RoomCard: FC<Props> = (props) => {
         </div>
 
         <p className="pt-2 text-xs capitalize">{type} Room</p>
-        <p className="pt-3 pb-6">{description.slice(1, 100)}...</p>
+        <p className="pt-3 pb-6">{description.slice(0, 100)}...</p>
 
         <Link
           href={`/rooms/${slug.current}`}
