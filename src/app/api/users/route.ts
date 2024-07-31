@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/libs/auth";
-import { createReview, getUserData, updateReview } from "@/libs/apis";
+import { createReview, getUserData, updateReview, checkReviewExists } from "@/libs/apis";
 
 export async function GET(req: Request, res: Response) {
   const session = await getServerSession(authOptions);
