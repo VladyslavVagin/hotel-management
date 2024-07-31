@@ -64,7 +64,7 @@ const UserDetails = (props: { params: { id: string } }) => {
     }
   };
 
-  const fetchUserBooking = async (): Promise<void> => await getUserBookings(userId);
+  const fetchUserBooking = async () => await getUserBookings(userId);
   const fetchUserData = async () => {
     const { data } = await axios.get<User>("/api/users");
     return data;
