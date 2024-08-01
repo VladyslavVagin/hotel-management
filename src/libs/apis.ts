@@ -1,4 +1,4 @@
-import { CreateReviewDto, Review } from './../models/review';
+import { CreateReviewDto, Review } from '@/models/review';
 import axios from 'axios';
 
 import { CreateBookingDto, Room } from '@/models/room';
