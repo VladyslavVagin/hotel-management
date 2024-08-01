@@ -40,7 +40,7 @@ const RoomDetails = (props: { params: { slug: string } }) => {
   const calcMinCheckoutDate = () => {
     if (checkinDate) {
       const date = new Date(checkinDate);
-      date.setDate(date.getDate() + 1);
+      date?.setDate(date.getDate() + 1);
       return date;
     }
 
@@ -86,7 +86,7 @@ const RoomDetails = (props: { params: { slug: string } }) => {
   };
 
   const calcNumDays = () => {
-    if (!checkinDate || !checkoutDate) return;
+    if (!checkinDate || !checkoutDate) return 0;
     const diffTime = checkoutDate.getTime() - checkinDate.getTime();
     const noOfDays = Math.ceil(diffTime / (24 * 60 * 60 * 1000));
     return noOfDays;

@@ -9,7 +9,7 @@ type Props = {
   setCheckinDate: Dispatch<SetStateAction<Date | null>>;
   checkoutDate: Date | null;
   setCheckoutDate: Dispatch<SetStateAction<Date | null>>;
-  calcMinCheckoutDate: () => Date | null | undefined;
+  calcMinCheckoutDate: () => Date | null;
   adults: number;
   setAdults: Dispatch<SetStateAction<number>>;
   childrenNumber: number;
@@ -94,9 +94,10 @@ const BookRoomCta: FC<Props> = (props) => {
             onChange={(date) => setCheckoutDate(date)}
             dateFormat="dd/MM/yyyy"
             disabled={!checkinDate}
-            minDate={calcMinCheckoutDate()}
+            minDate={calcMinCheckoutDate() || new Date()}
             id="check-out-date"
             className="w-full border border-gray-300 text-black rounded-lg p-2.5 focus:ring-primary focus:border-primary"
+
           />
         </div>
       </div>
