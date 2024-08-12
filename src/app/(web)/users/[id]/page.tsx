@@ -16,7 +16,6 @@ import Chart from "@/components/Chart/Chart";
 import RatingModal from "@/components/RatingModal/RatingModal";
 import BackDrop from "@/components/BackDrop/BackDrop";
 import LoadingSpinner from "../../loading";
-import review from "../../../../../schemaTypes/review";
 
 const UserDetails = (props: { params: { id: string } }) => {
   const {

@@ -34,7 +34,7 @@ const Table: FC<Props> = ({ bookingDeatils, setRoomId, toggleRatingModal }) => {
               className="bg-white border-b hover:bg-gray-50"
             >
               <td
-                onClick={() => router.push(`/room/${booking.hotelRoom.slug.current}`)}
+                onClick={() => router.push(`/rooms/${booking.hotelRoom.slug.current}`)}
                 className="px-6 underline text-blue-600 cursor-pointer py-4 font-medium whitespace-nowrap"
               >
                 {booking.hotelRoom.name}
